@@ -1,3 +1,4 @@
+[![hackmd-github-sync-badge](https://hackmd.io/tIu6M2NhSWWtCq2ieHBEOA/badge)](https://hackmd.io/tIu6M2NhSWWtCq2ieHBEOA)
 https://hackmd.io/@Pi4yvNIzRAe1z54_pwjpQA/ryVL4yqwP
 ```C# MVC```
 # window.showModalDialog 替代方法
