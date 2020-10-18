@@ -1,3 +1,4 @@
+https://hackmd.io/@Pi4yvNIzRAe1z54_pwjpQA/ryVL4yqwP
 ```C# MVC```
 # window.showModalDialog 替代方法
 
