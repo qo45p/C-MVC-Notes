@@ -235,3 +235,73 @@ public ActionResult Index(string Name, string Message)
     return View();
 }
 ```
+
+### 範例4
+```html=
+<form id="form1" runat="server">
+        <input type="button" value="另開視窗" id="btnParent" />
+        <!--父視窗的DOM元素-->
+        <div id="divParent">divParent&ensp; </div>
+        <div id="divParent2">divParent2&ensp; </div>
+        <div id="divParent3">Try Try</div>
+
+        <!--引用jQuery-->
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript">
+            
+
+            $(function () {                
+                $("#btnParent").on("click", function () {
+                    //另開popup window
+                    var child = window.open('@Url.Action("B","Home")', "_blank", "width=500px,height=500px");
+                    var timer = setInterval(checkChild, 500);
+
+                    function checkChild() {
+                        if (child.closed) {
+                            alert("Child window closed");
+                            clearInterval(timer);
+                            document.getElementById("divParent3").innerHTML = "New text!";
+                        }
+                    }
+                });            
+
+            });
+
+            //注意父視窗要宣告成global function
+            function windowOpenReturnFunc(ret) {
+                //ret為子視窗回傳的值
+                alert("子視窗回傳的值:" + ret);
+                window.opener.document.getElementById("divParent2").innerHTML = ret;
+                
+            }
+        </script>
+    </form>
+
+```
+
+```html=
+<form id="form1" runat="server">
+    <select id="pets" name="pets">
+        <option value="dog">Dog</option>
+        <option value="cat" selected>Cat</option>
+        <option value="hamster">Hamster</option>
+        <option value="parrot">Parrot</option>
+        <option value="goldfish">Goldfish</option>
+    </select>
+
+    <input type="button" value="關閉子視窗" id="btnSub" />
+    <!--引用jQuery-->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#btnSub").on("click", function () {
+                let subParam = "兒子的值";             
+                window.opener.document.getElementById("divParent").innerHTML = "兒子給的值";
+                window.opener.document.getElementById("divParent2").innerHTML = "選的動物: " + $('#pets').val();
+                window.opener.windowOpenReturnFunc(subParam);//執行父視窗的function
+            });
+        });
+    </script>
+</form>
+```
+
