@@ -305,3 +305,106 @@ public ActionResult Index(string Name, string Message)
 </form>
 ```
 
+### 範例五
+```
+//Index.cshtml
+    <form id="form1" runat="server">
+        <input type="button" value="另開視窗" id="btnParent" />
+        <!--父視窗的DOM元素-->
+        <div id="divParent">divParent&ensp; </div>
+        <div id="divParent2">divParent2&ensp; </div>
+        <div id="divParent3">Try Try</div>
+        <h3 id="h3">H3</h3>
+
+
+        <!--引用jQuery-->
+        <!--[if !IE]> -->
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <!-- <![endif]-->
+        <!--[if IE]-->
+        <script src="https://code.jquery.com/jquery-1.11.0.min.js"
+                integrity="sha256-spTpc4lvj4dOkKjrGokIrHkJgNA0xMS98Pw9N7ir9oI="
+                crossorigin="anonymous"></script>
+        <!--[endif]-->
+
+        <script type="text/javascript">
+            $(function () {
+                $("#btnParent").on("click", function () {
+
+                    var child = window.open('@Url.Action("B","Home")?funcName=windowOpenReturnFunc', "_blank", "width=500px,height=500px");
+                    //window.popup = window.open('@Url.Action("B","Home")?fncName=windowOpenReturnFunc', "_blank", "width=500px,height=500px");
+
+                    //解決IE版本addEventListener問題 u
+                    //child[child.addEventListener ? 'addEventListener' : 'attachEvent'](  (child.attachEvent ? 'on' : '') + 'load', B, false);
+                    //child.addEventListener('load', B, false);
+
+                    //IE new Function    
+                    child.onload = new function () {
+                        child[child.addEventListener ? 'addEventListener' : 'attachEvent'](  (child.attachEvent ? 'on' : '') + 'unload', B, true);
+                    }
+
+                    ////Chrome
+                    //child.onload = function () {
+                    //    //child[child.addEventListener ? 'addEventListener' : 'attachEvent'](  (child.attachEvent ? 'on' : '') + 'unload', B, true);
+                    //    child.onbeforeunload = function(){
+                    //        B();                         
+                    //     }
+                    //}
+                });
+            });
+
+            function B() {
+                var x = 1;
+                window.alert(x + "大好");
+                document.getElementById("h3").innerHTML = x + "大好";
+            }
+
+            //注意父視窗要宣告成global function
+            function windowOpenReturnFunc(ret) {
+                //ret為子視窗回傳的值
+                //alert("子視窗回傳的值:" + ret);
+                document.getElementById("divParent2").innerHTML = ret;
+
+            }
+        </script>
+    </form>
+        </script>
+```
+```
+//B.cshtml
+<form id="form1" runat="server">
+    <select id="pets" name="pets">
+        <option value="dog">Dog</option>
+        <option value="cat" selected>Cat</option>
+        <option value="hamster">Hamster</option>
+        <option value="parrot">Parrot</option>
+        <option value="goldfish">Goldfish</option>
+    </select>
+
+    <p>@ViewBag.funcName</p>
+
+    <input type="button" value="關閉子視窗" id="btnSub" />
+    <!--引用jQuery-->
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#btnSub").on("click", function () {
+                let subParam = "TTTTT";             
+                window.opener.document.getElementById("divParent").innerHTML = "兒子給的值";
+                //window.opener.document.getElementById("divParent2").innerHTML = "選的動物: " + $('#pets').val();
+                //window.opener.windowOpenReturnFunc(subParam);//執行父視窗的function
+                //window.opener["@ViewBag.funcName"](subParam);
+                window.opener.window.windowOpenReturnFunc(subParam);
+                window.close();
+            });
+        });
+    </script>
+</form>
+
+<a href="#" onclick='
+    window.close(); return false;'>
+    關閉視窗
+</a>
+
+```
